@@ -129,7 +129,6 @@ if args.all:
     args.remove_NUMPC=60
     args.remove_equal=True
     args.escapeforMoses=True
-    args.noUPPER=True
     if not args.remove_NUMPC: args.remove_NUMPC=60
     if not args.remove_short: args.remove_short=5
 entrada=codecs.open(args.inputfile,"r",encoding="utf-8")
