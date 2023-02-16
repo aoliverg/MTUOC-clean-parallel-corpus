@@ -52,6 +52,12 @@ def remove_short(segment,minimum):
         remove=True
     return(remove)
 
+def remove_long (segment,maximum):
+    remove=False
+    if len(segment)>int(maximum):
+        remove=True
+    return(remove)
+
 def remove_equal(SLsegment,TLsegment):
     remove=False
     if SLsegment.strip()==TLsegment.strip(): remove=True
@@ -106,6 +112,7 @@ parser.add_argument('--remove_tags', action='store_true', default=False, dest='r
 parser.add_argument('--unescape_html', action='store_true', default=False, dest='unescape_html',help='Unescapes html entities.')
 parser.add_argument('--fixencoding', action='store_true', default=False, dest='fixencoding',help='Tries to restore errors in encoding.')
 parser.add_argument('--remove_empty', action='store_true', default=False, dest='remove_empty',help='Removes segments with empty SL or TL segments.')
+parser.add_argument('--remove_long', action='store', default=False, dest='remove_long',help='Removes segments with more than the given number of characters.')
 parser.add_argument('--remove_short', action='store', default=False, dest='remove_short',help='Removes segments with less than the given number of characters.')
 parser.add_argument('--remove_equal', action='store_true', default=False, dest='remove_equal',help='Removes segments with equal SL or TL segments.')
 parser.add_argument('--remove_NUMPC', action='store', default=False, dest='remove_NUMPC',help='Removes segments with a percent of numbers higher than the given.')
