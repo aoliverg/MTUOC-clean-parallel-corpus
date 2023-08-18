@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 import re
 import regex as rx
 from ftfy import fix_encoding
-
+import unicodedata
 
 
 def remove_tags(segment):
@@ -35,10 +35,10 @@ def remove_tags(segment):
 
 
 def normalize_apos(segment):
-    segmentnorm=segment.replace("’","'")
-    segmentnorm=segmentnorm.replace("`","'")
-    segmentnorm=segmentnorm.replace("‘","'")
-    return(segmentnorm)
+    segment=segment.replace("’","'")
+    segment=segment.replace("`","'")
+    segment=segment.replace("‘","'")
+    return(segment)
     
 def remove_empty(SLsegment,TLsegment):
     remove=False
@@ -102,6 +102,7 @@ parser.add_argument('-o','--out', action="store", dest="outputfile", help='The o
 parser.add_argument('-a','--all', action="store_true", dest="all", help='Performs default cleaning actions.')
 parser.add_argument('--remove_control_characters', action='store_true', default=False, dest='remove_control_characters',help='Remove control characters.')
 parser.add_argument('--norm_apos', action='store_true', default=False, dest='norm_apos',help='Normalize apostrophes.')
+parser.add_argument('--norm_unicode', action='store_true', default=False, dest='norm_unicode',help='Normalize unicode characters to NFKC.')
 parser.add_argument('--remove_tags', action='store_true', default=False, dest='remove_tags',help='Removes html/XML tags.')
 parser.add_argument('--unescape_html', action='store_true', default=False, dest='unescape_html',help='Unescapes html entities.')
 parser.add_argument('--fixencoding', action='store_true', default=False, dest='fixencoding',help='Tries to restore errors in encoding.')
@@ -124,6 +125,7 @@ args = parser.parse_args()
 if args.all:
     args.remove_control_characters=True
     args.norm_apos=True
+    args.norm_unicode=True
     args.remove_tags=True
     args.unescape_html=True
     args.fixencoding=True
@@ -178,6 +180,9 @@ for linia in entrada:
     if args.remove_tags and toWrite:
         slsegment=remove_tags(slsegment)
         tlsegment=remove_tags(tlsegment)
+    if args.norm_unicode and toWrite:
+        slsegment=unicodedata.normalize("NFKC", slsegment)
+        tlsegment=unicodedata.normalize("NFKC", tlsegment)
     if args.norm_apos and toWrite:
         slsegment=normalize_apos(slsegment)
         tlsegment=normalize_apos(tlsegment)
@@ -243,5 +248,9 @@ for linia in entrada:
             if pattern.search(tlsegment):
                 toWrite=False
     if toWrite:
-        sortida.write(linia+"\n")
+        if len(camps)==2:
+            cadena=slsegment+"\t"+tlsegment
+        elif len(camps)>2:
+            cadena=slsegment+"\t"+tlsegment+"\t"+"\t".join(camps[2:])
+        sortida.write(cadena+"\n")
         
